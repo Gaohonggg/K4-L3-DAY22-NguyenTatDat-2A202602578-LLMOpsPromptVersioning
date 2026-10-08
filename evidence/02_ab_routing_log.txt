@@ -1,0 +1,227 @@
+✅ Config OK  |  Provider: OPENAI  |  Project: day22-nguyentatdat-2a202602578
+Step 2 | project=day22-nguyentatdat-2a202602578 | batch_id=c88ae611-844a-473c-b62b-ac7fd0b692f4
+Mode=full | questions=50
+PUSH nguyentatdat-2a202602578-rag-v1 → https://smith.langchain.com/prompts/nguyentatdat-2a202602578-rag-v1/d2aeb8f8?organizationId=650acb27-d0a2-4969-965e-749f1e50b258
+PUSH nguyentatdat-2a202602578-rag-v2 → https://smith.langchain.com/prompts/nguyentatdat-2a202602578-rag-v2/e770ab1a?organizationId=650acb27-d0a2-4969-965e-749f1e50b258
+PULL nguyentatdat-2a202602578-rag-v1 from Hub | commit=d2aeb8f8ec85609d9eec40e73a96f654d37799dbc56daec4345335c179604866
+PULL nguyentatdat-2a202602578-rag-v2 from Hub | commit=e770ab1a2c7f83f5258df991a1d2a08ecca6ded1b78828bb60bdb388dfbdc727
+Prompt manifest saved: /Users/nguyendat/Documents/VIN/LAB/K4-L3-DAY22-NguyenTatDat-2A202602578-LLMOpsPromptVersioning/logs/02_prompt_manifest.json
+Knowledge base: 107 chunks | chunk_size=500 | overlap=50
+🔨 Đang tạo FAISS index từ 107 chunks ...
+✅ FAISS vectorstore đã sẵn sàng.
+
+[01/50] [prompt-v2] request_id=req-0000 | Q: What are the three main types of machine learning?
+A: **Definition:** The three main types of machine learning are supervised learning, unsupervised learning, and reinforcement learning.
+
+**Explanation:** In supervised learning, models are trained using labeled input-output pairs to learn a mapping function. Unsupervised learning involves models that discover hidden patterns or structures in unlabeled data. Reinforcement learning focuses on an agent that learns to make decisions through interactions with an environment, optimizing for cumulative rewards.
+
+[02/50] [prompt-v2] request_id=req-0001 | Q: What is overfitting in machine learning?
+A: **Definition:** Overfitting in machine learning occurs when a model learns the training data too well, including its noise, resulting in poor generalization to new, unseen data.
+
+**Explanation:** An overfitted model demonstrates high accuracy on training samples but fails to perform well on validation or test data because it has memorized specific details rather than identifying general patterns. This phenomenon is often indicated by a significant gap between training accuracy and validation accuracy. To mitigate overfitting, techniques such as regularization, dropout, early stopping, and increasing the amount of training data can be employed.
+
+[03/50] [prompt-v1] request_id=req-0002 | Q: Explain the bias-variance tradeoff.
+A: The bias-variance tradeoff is a key concept in machine learning that describes the balance between two types of errors in predictive models. High bias leads to underfitting, where the model makes strong assumptions and fails to capture the underlying data patterns, while high variance results in overfitting, where the model is overly sensitive to fluctuations in the training data. The goal is to find an optimal model that minimizes total prediction error by balancing bias and variance.
+
+[04/50] [prompt-v1] request_id=req-0003 | Q: How does regularization prevent overfitting?
+A: Regularization prevents overfitting by adding penalty terms to the loss function, which discourages overly complex models. L1 regularization promotes sparsity by adding the absolute value of weights, while L2 regularization keeps weights small but non-zero by adding the squared magnitude of weights. This helps the model generalize better to unseen data by avoiding memorization of the training data.
+
+[05/50] [prompt-v2] request_id=req-0004 | Q: What is cross-validation?
+A: **Definition:** Cross-validation is a model evaluation technique that provides a more reliable estimate of a model's performance by splitting data into multiple folds.
+
+**Explanation:** In k-fold cross-validation, the dataset is divided into k equal parts, where the model is trained on k-1 folds and tested on the remaining fold, repeating this process k times. Stratified cross-validation ensures that the class distribution is preserved in each fold, while leave-one-out cross-validation uses a single sample as the validation set. This technique allows for a direct comparison of performance metrics across experiments, effectively linking production monitoring with offline evaluation.
+
+[06/50] [prompt-v2] request_id=req-0005 | Q: What is backpropagation?
+A: **Definition:** Backpropagation is the core algorithm used for training neural networks, which computes gradients of the loss function with respect to each weight in the network.
+
+**Explanation:** The algorithm applies the chain rule of calculus to propagate error signals backward from the output layer through the network, calculating partial derivatives layer by layer. These gradients reveal the contribution of each weight to the total error, allowing for their adjustment. The weights are then updated using optimization techniques such as gradient descent and its variants, including Adam, RMSprop, and SGD with momentum, to minimize the loss function.
+
+[07/50] [prompt-v2] request_id=req-0006 | Q: What are Convolutional Neural Networks primarily used for?
+A: **Definition:** Convolutional Neural Networks (CNNs) are a specialized class of neural networks designed for processing grid-like data, particularly images.
+
+**Explanation:** CNNs are primarily used for applications such as image classification, object detection, semantic segmentation, and video analysis. They utilize convolutional layers to detect local features and pooling layers to reduce spatial dimensions, which helps in managing computational complexity while retaining important features. This makes CNNs particularly effective for tasks that involve visual data.
+
+[08/50] [prompt-v2] request_id=req-0007 | Q: How do LSTM networks address the vanishing gradient problem?
+A: **Definition:** Long Short-Term Memory (LSTM) networks are a type of recurrent neural network designed to manage long-range dependencies in sequence data.
+
+**Explanation:** LSTMs address the vanishing gradient problem through their unique architecture, which includes gating mechanisms: the input gate, forget gate, and output gate. These gates regulate the flow of information, allowing gradients to flow unchanged over many time steps. This capability enables LSTMs to maintain relevant information over longer sequences, effectively mitigating the issues that standard recurrent neural networks face with vanishing gradients.
+
+[09/50] [prompt-v1] request_id=req-0008 | Q: What activation functions are commonly used in neural networks?
+A: Common activation functions in neural networks include ReLU, sigmoid, and tanh. Newer variants such as Leaky ReLU, ELU, and GELU are also used, particularly in transformers.
+
+[10/50] [prompt-v2] request_id=req-0009 | Q: What is the role of pooling layers in CNNs?
+A: **Definition:** Pooling layers are components of Convolutional Neural Networks (CNNs) that perform spatial downsampling to reduce the spatial dimensions of the input data.
+
+**Explanation:** The primary role of pooling layers is to decrease computational complexity while retaining important features from the input. They achieve this by reducing the spatial resolution, which results in a smaller and more manageable representation, fewer parameters, and enhanced translational invariance. Pooling layers, such as max pooling and average pooling, help control overfitting and decrease the number of computations required in subsequent layers.
+
+[11/50] [prompt-v1] request_id=req-0010 | Q: What is the transformer architecture?
+A: The transformer architecture is a model used in natural language processing and deep learning that employs self-attention mechanisms and processes entire sequences in parallel. It consists of an encoder stack and a decoder stack, each made up of layers of multi-head self-attention. This architecture allows for massive parallelism during training, distinguishing it from recurrent networks that process tokens sequentially.
+
+[12/50] [prompt-v1] request_id=req-0011 | Q: What are word embeddings?
+A: Word embeddings are dense vector representations of words that capture their semantic meaning. They represent words as vectors where semantically similar words are geometrically close, and methods like Word2Vec, GloVe, and FastText are used to learn these embeddings from large text corpora.
+
+[13/50] [prompt-v2] request_id=req-0012 | Q: What is transfer learning in NLP?
+A: **Definition:** Transfer learning in natural language processing (NLP) refers to the practice of pre-training large models on extensive datasets and then fine-tuning them for specific downstream tasks.
+
+**Explanation:** This approach allows models to develop a general understanding of language by learning representations that encode grammar, facts, and reasoning patterns during the pre-training phase. Subsequently, fine-tuning adjusts these learned representations with minimal task-specific data, enabling the model to perform effectively on various NLP tasks.
+
+[14/50] [prompt-v1] request_id=req-0013 | Q: How does BERT handle language understanding?
+A: BERT handles language understanding through bidirectional transformer training, which allows it to predict randomly masked tokens using context from both the left and right sides of a sentence. It also employs a next sentence prediction task to understand relationships between sentence pairs, capturing richer contextual representations.
+
+[15/50] [prompt-v2] request_id=req-0014 | Q: What is self-attention in transformers?
+A: **Definition:** Self-attention is a mechanism used in transformer architectures that allows models to evaluate the importance of different words in a sequence relative to one another.
+
+**Explanation:** In self-attention, for each token in a sequence, a weighted sum of all token representations is computed, with the weights, known as attention scores, indicating the relevance of each token to the others. This process involves creating queries, keys, and values through linear projections of the input, and the attention score between two tokens is determined by the dot product of their query and key vectors. This mechanism enables transformers to process entire sequences in parallel, distinguishing them from recurrent networks that handle tokens sequentially.
+
+[16/50] [prompt-v1] request_id=req-0015 | Q: What is GPT and how is it trained?
+A: GPT (Generative Pre-trained Transformer) is a family of autoregressive language models developed by OpenAI. It is trained using autoregressive training to predict the next token based on previous tokens, utilizing a unidirectional transformer and massive text datasets to learn grammar, facts, reasoning, and world knowledge.
+
+[17/50] [prompt-v2] request_id=req-0016 | Q: What is instruction tuning?
+A: **Definition:** Instruction tuning is a supervised fine-tuning technique used to enhance the usefulness and alignment of large language models (LLMs) with human intent.
+
+**Explanation:** This process involves fine-tuning pre-trained LLMs on instruction-following datasets, which consist of diverse (instruction, response) pairs that cover various tasks such as summarization, translation, question answering, and coding. By training on these datasets, the model learns to follow natural language instructions instead of merely predicting the next token, thereby improving its ability to understand and execute user commands.
+
+[18/50] [prompt-v2] request_id=req-0017 | Q: What is RLHF?
+A: **Definition:** Reinforcement Learning from Human Feedback (RLHF) is a technique used to align large language models (LLMs) with human values by incorporating human preferences into the training process.
+
+**Explanation:** The RLHF process consists of three main steps: first, fine-tuning the LLM through supervised learning on demonstrations; second, training a reward model based on human preference comparisons of model outputs; and third, optimizing the language model against the reward model using reinforcement learning, typically employing Proximal Policy Optimization (PPO). This approach aims to ensure that LLMs are helpful, harmless, and honest, and it has been integral to the development of models like ChatGPT, Claude, and Gemini.
+
+[19/50] [prompt-v1] request_id=req-0018 | Q: What is chain-of-thought prompting?
+A: Chain-of-thought prompting is a technique that enhances the reasoning capabilities of language models by encouraging them to articulate their thought process step by step. This method improves performance on complex tasks by breaking problems into sub-steps before reaching a conclusion, particularly benefiting math word problems, logical reasoning, and commonsense reasoning benchmarks.
+
+[20/50] [prompt-v2] request_id=req-0019 | Q: What is the context length of GPT-4?
+A: Definition: The context length of GPT-4 refers to the maximum number of tokens it can process and generate in a single interaction.
+
+Explanation: GPT-4 supports a context length of up to 128K tokens, allowing it to handle very long documents, codebases, and extended conversations without losing track of earlier information. This extensive context capability enhances its ability to maintain coherence and relevance throughout lengthy exchanges.
+
+[21/50] [prompt-v1] request_id=req-0020 | Q: What is Retrieval-Augmented Generation?
+A: Retrieval-Augmented Generation (RAG) is an approach that enhances language models by integrating external knowledge. It combines generative language models with retrieval from external knowledge bases to provide grounded and up-to-date answers, reducing hallucination and enabling access to current information.
+
+[22/50] [prompt-v1] request_id=req-0021 | Q: What are the main components of a RAG pipeline?
+A: The main components of a RAG pipeline are a retriever and a generator (LLM). The retriever searches a document store for relevant passages based on a user query, while the generator produces answers using the original query and the retrieved context.
+
+[23/50] [prompt-v2] request_id=req-0022 | Q: What is dense retrieval?
+A: **Definition:** Dense retrieval is a neural approach to document retrieval that utilizes neural embeddings to encode both queries and documents, allowing for the determination of relevance based on cosine similarity.
+
+**Explanation:** In dense retrieval, both queries and documents are transformed into dense vectors using a bi-encoder model, such as DPR or E5. During the retrieval process, the encoded query is compared against pre-computed document embeddings through fast nearest-neighbor search. This method captures semantic similarity, enabling the retrieval of relevant documents even when there are no shared keywords, in contrast to traditional sparse retrieval methods like BM25, which depend on term frequency.
+
+[24/50] [prompt-v1] request_id=req-0023 | Q: Why is chunking strategy important in RAG?
+A: Chunking strategy is important in RAG because it significantly impacts retrieval precision and context window fit. The size of the chunks affects the relevance of the content retrieved; if chunks are too large, they may include irrelevant information, while if they are too small, they may lack sufficient context for answering questions.
+
+[25/50] [prompt-v2] request_id=req-0024 | Q: What advanced RAG techniques exist beyond basic retrieval?
+A: **Definition:** Advanced Retrieval-Augmented Generation (RAG) techniques enhance the basic retrieval process to improve the accuracy and coverage of generated responses.
+
+**Explanation:** These techniques include re-ranking, query expansion, HyDE (Hypothetical Document Embeddings), and iterative retrieval for multi-hop questions. Re-ranking utilizes a cross-encoder model to re-score retrieved candidates, thereby increasing precision. Query expansion involves generating multiple reformulations of the original query to enhance recall, while HyDE first generates a hypothetical answer and then uses it to guide the retrieval process.
+
+[26/50] [prompt-v1] request_id=req-0025 | Q: What are vector databases used for?
+A: Vector databases are used for storing and querying high-dimensional vector embeddings to enable fast similarity search. They support approximate nearest-neighbor (ANN) search at scale and store embedding vectors alongside their metadata.
+
+[27/50] [prompt-v2] request_id=req-0026 | Q: What is FAISS?
+A: Definition: FAISS (Facebook AI Similarity Search) is a library developed by Meta AI Research for efficient vector search, supporting both exact and approximate nearest neighbor algorithms.
+
+Explanation: FAISS offers various index types, including IndexFlatL2 for exact brute-force search, IndexIVFFlat for inverted file indexing with clustering, and IndexHNSWFlat for graph-based approximate search. The library is optimized for performance on both CPU and GPU, enhancing its efficiency in handling large-scale similarity searches.
+
+[28/50] [prompt-v2] request_id=req-0027 | Q: How do text embeddings capture semantic meaning?
+A: **Definition:** Text embeddings are numerical representations that encapsulate the semantic meaning of text by converting it into numerical vectors.
+
+**Explanation:** Text embeddings are designed such that semantically similar texts yield geometrically close vectors in the embedding space. This is achieved through embedding models, which are trained to position similar texts near each other based on their meanings. The dimensionality of these embeddings typically ranges from 384 to 3072, depending on the specific model used.
+
+[29/50] [prompt-v2] request_id=req-0028 | Q: What is HNSW?
+A: **Definition:** HNSW (Hierarchical Navigable Small World) is a graph-based algorithm designed for approximate nearest-neighbor search.
+
+**Explanation:** HNSW constructs a hierarchical graph structure consisting of multiple layers, where higher layers have fewer nodes and longer-range connections, while lower layers contain all nodes with shorter-range connections. The search process begins at the top layer, where the algorithm greedily navigates toward the query and descends through the layers to achieve higher precision. This approach allows HNSW to balance search accuracy and speed effectively, making it a preferred index type in many vector databases.
+
+[30/50] [prompt-v2] request_id=req-0029 | Q: What is hybrid search in vector databases?
+A: **Definition:** Hybrid search in vector databases is a retrieval method that integrates both neural and keyword-based search techniques to enhance the effectiveness of information retrieval.
+
+**Explanation:** It combines dense vector search, which focuses on semantic matching, with sparse keyword search (such as BM25), which emphasizes exact keyword matching. The process utilizes Reciprocal Rank Fusion (RRF) to merge the ranked results from both approaches by summing their reciprocal ranks, resulting in a more robust combined ranking that leverages the strengths of both methods while mitigating their individual weaknesses.
+
+[31/50] [prompt-v2] request_id=req-0030 | Q: What is LangChain?
+A: **Definition:** LangChain is an open-source framework designed to simplify the development of applications utilizing large language models (LLMs).
+
+**Explanation:** It provides modular components that facilitate various aspects of LLM application development, including prompt management, output parsing, memory, retrieval, and tool integration. LangChain supports a wide range of LLM providers, vector stores, document loaders, and embedding models, all through a consistent interface, making it a versatile tool for developers in the LLM space.
+
+[32/50] [prompt-v2] request_id=req-0031 | Q: What is LangChain Expression Language (LCEL)?
+A: **Definition:** LangChain Expression Language (LCEL) is a declarative syntax designed for composing components within the LangChain framework.
+
+**Explanation:** LCEL utilizes the pipe operator (|) to enable a readable and functional style of chaining various components, such as prompts, large language models (LLMs), and output parsers. It supports advanced features like streaming, asynchronous operations, and batching, allowing for first-class streaming where tokens can be yielded as they are generated. This functionality enhances the flexibility and efficiency of building applications with large language models.
+
+[33/50] [prompt-v1] request_id=req-0032 | Q: What is LangGraph?
+A: LangGraph is an extension of LangChain designed for building stateful, multi-actor applications represented as directed graphs. It supports cycles, allowing workflows to revisit previous nodes based on conditions, which enables iterative agentic workflows.
+
+[34/50] [prompt-v2] request_id=req-0033 | Q: What memory types does LangChain support?
+A: **Definition:** LangChain supports multiple memory types to facilitate conversational context across turns.
+
+**Explanation:** The memory types provided by LangChain include ConversationBufferMemory, which stores the full conversation history verbatim; ConversationSummaryMemory, which maintains a running summary to save tokens; ConversationWindowMemory, which retains only the last k exchanges; and vector store memory, which retrieves the most relevant past exchanges using semantic similarity. These memory types enable different approaches to managing conversational context, catering to various application needs.
+
+[35/50] [prompt-v1] request_id=req-0034 | Q: What are LangChain retrievers?
+A: LangChain retrievers are components that fetch relevant documents based on a user query. They support various data sources, including vector stores and BM25, and provide a standard method, get_relevant_documents(query), for retrieving documents regardless of the underlying data source.
+
+[36/50] [prompt-v2] request_id=req-0035 | Q: What is LangSmith?
+A: **Definition:** LangSmith is a developer platform designed for building, debugging, testing, evaluating, and monitoring production-grade LLM (Large Language Model) applications.
+
+**Explanation:** Developed by the LangChain team, LangSmith facilitates automatic tracing of LLM applications, capturing detailed telemetry for each component with minimal code changes. By enabling the LANGCHAIN_TRACING_V2 environment variable and providing an API key, users can automatically trace all LangChain calls. Additionally, LangSmith offers comprehensive monitoring features, including latency percentiles, error rates, token costs, and feedback annotations, which are aggregated in dashboards to provide insights into application performance.
+
+[37/50] [prompt-v2] request_id=req-0036 | Q: What information do LangSmith traces capture?
+A: **Definition:** LangSmith traces are detailed records that provide visibility into the behavior of LLM applications.
+
+**Explanation:** They capture inputs, outputs, latency, token usage, and errors for every component in a chain. Each run in a trace records the exact input passed to a component, the output produced, the time taken, and any errors encountered. For LLM calls, LangSmith additionally records the number of prompt tokens, completion tokens, and the estimated cost associated with the calls.
+
+[38/50] [prompt-v1] request_id=req-0037 | Q: What is the LangSmith Prompt Hub?
+A: The LangSmith Prompt Hub is a centralized repository for managing prompt templates, allowing for storage, versioning, and sharing of these templates. It supports A/B testing and rollback features, enabling teams to push new versions of prompts and revert to previous versions if necessary.
+
+[39/50] [prompt-v2] request_id=req-0038 | Q: How does LangSmith help monitor production LLM applications?
+A: **Definition:** LangSmith is a developer platform designed for monitoring, debugging, testing, and evaluating production-grade LLM applications.
+
+**Explanation:** LangSmith facilitates the monitoring of LLM applications by providing key metrics such as latency percentiles, error rates, token costs, and feedback annotations. It aggregates data across numerous traces, highlighting latency trends (p50, p95, p99), error rates, and cost breakdowns associated with LLM calls or specific chain steps. Additionally, human evaluators can annotate traces with feedback, which can be utilized for further evaluation, enhancing the overall visibility and understanding of application behavior.
+
+[40/50] [prompt-v2] request_id=req-0039 | Q: What are LangSmith datasets used for?
+A: **Definition:** LangSmith datasets are collections of example inputs and expected outputs utilized for systematic evaluation of language model applications.
+
+**Explanation:** These datasets facilitate the comparison of different model versions or prompt changes by providing representative queries and reference answers. Teams can conduct batch evaluation experiments when updating models or prompts, and the results of these evaluations are logged as traces, allowing for direct comparison of performance metrics across various iterations.
+
+[41/50] [prompt-v2] request_id=req-0040 | Q: What is RAGAS?
+A: **Definition:** RAGAS (Retrieval Augmented Generation Assessment) is an open-source framework designed for evaluating Retrieval Augmented Generation (RAG) pipelines.
+
+**Explanation:** RAGAS employs LLM-based reference-free metrics to assess the quality of RAG outputs, focusing on dimensions such as factual grounding, relevance, and support from retrieved context. This approach differs from traditional NLP metrics like BLEU or ROUGE, which rely on exact match comparisons. Additionally, RAGAS provides a standardized benchmark that facilitates the comparison of different RAG configurations.
+
+[42/50] [prompt-v1] request_id=req-0041 | Q: How does RAGAS compute faithfulness?
+A: RAGAS computes faithfulness by extracting claims from an answer and checking whether each claim can be inferred from the retrieved context. It uses an LLM to decompose the answer into atomic statements and then assesses the fraction of those statements that are supported by the context, with a target faithfulness score of 0.8 or higher commonly used as a quality threshold.
+
+[43/50] [prompt-v2] request_id=req-0042 | Q: What is answer relevancy in RAGAS?
+A: Definition: Answer relevancy in RAGAS refers to how well a generated answer addresses the original question posed.
+
+Explanation: In RAGAS, answer relevancy is assessed by generating synthetic questions from the answer using a language model (LLM) and then computing the cosine similarity between these synthetic questions and the original question. A high cosine similarity score indicates that the answer is focused and directly responsive to the question asked. This evaluation is part of a broader framework designed to assess the quality of answers in retrieval-augmented generation (RAG) systems.
+
+[44/50] [prompt-v2] request_id=req-0043 | Q: What is context recall in RAGAS?
+A: **Definition:** Context recall in RAGAS measures how thoroughly the retrieved passages cover the information needed to answer a question, evaluated against a ground truth reference.
+
+**Explanation:** This metric assesses the effectiveness of the retriever by comparing each sentence of the reference answer to the retrieved context, determining whether the context contains the necessary information to derive that sentence. A high recall score indicates that the retriever successfully fetched context that supports the answer. RAGAS also provides a standardized benchmark for comparing different RAG configurations.
+
+[45/50] [prompt-v1] request_id=req-0044 | Q: What inputs does RAGAS evaluation require?
+A: RAGAS evaluation requires user queries, generated answers, retrieved contexts (a list of individual passage strings), and optionally reference answers.
+
+[46/50] [prompt-v2] request_id=req-0045 | Q: What is Guardrails AI?
+A: **Definition:** Guardrails AI is an open-source framework designed to enhance safety and validation in large language model (LLM) applications by adding layers of checks and constraints.
+
+**Explanation:** It allows developers to specify constraints on LLM outputs in a declarative manner and automatically enforces these constraints. The framework includes validators that can check for various properties such as personally identifiable information (PII), toxicity, bias, and schema compliance. In cases where validation fails, Guardrails AI can execute configurable actions, such as raising exceptions, to ensure the integrity of the outputs.
+
+[47/50] [prompt-v1] request_id=req-0046 | Q: What is PII and why is it important to detect in LLM responses?
+A: PII stands for Personally Identifiable Information, which includes data such as names, email addresses, phone numbers, and social security numbers that can identify an individual. It is important to detect PII in LLM responses because exposing this information can violate privacy regulations like GDPR and HIPAA, and it risks exposing sensitive information to unauthorized parties.
+
+[48/50] [prompt-v1] request_id=req-0047 | Q: What does structured output validation ensure?
+A: Structured output validation ensures that LLM responses conform to expected data formats and schemas, such as JSON, by detecting and fixing invalid formats.
+
+[49/50] [prompt-v2] request_id=req-0048 | Q: What is Constitutional AI?
+A: **Definition:** Constitutional AI is an approach to aligning language models with ethical principles by training them to evaluate and improve their own responses based on a set of constitutional principles.
+
+**Explanation:** Developed by Anthropic, this technique involves a self-critique mechanism where the model identifies issues in its outputs during a critique phase and revises them in a subsequent revision phase to ensure compliance with principles such as avoiding harmful content. This process minimizes the reliance on human feedback for addressing harmful outputs.
+
+[50/50] [prompt-v2] request_id=req-0049 | Q: What are common AI safety concerns with LLMs?
+A: **Definition:** Common AI safety concerns with large language models (LLMs) include hallucination, toxicity, bias, and PII leakage.
+
+**Explanation:** Hallucination occurs when the model generates information that sounds plausible but is factually incorrect. Toxicity refers to the generation of offensive, harmful, or abusive content. Bias is the perpetuation or amplification of societal prejudices that exist in the training data. PII leakage involves the unintended disclosure of personally identifiable information. These concerns highlight the risks associated with deploying LLMs in various applications.
+
+Routing: V1=19 | V2=31 | total=50
+Summary: succeeded=50 | failed=0 | total=50
+Trace queue flushed. Verify ab-rag-query traces for batch_id=c88ae611-844a-473c-b62b-ac7fd0b692f4 in LangSmith.

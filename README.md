@@ -1,173 +1,162 @@
-> **📌 Hình thức: BÀI CÁ NHÂN** — mỗi học viên tự làm và tự nộp 1 repo theo quy ước đặt tên.
-> **⏰ Thời lượng:** ~3–4 giờ · **Deadline:** 23:59 ngày học lab (GMT+7)
->
-> | Tài liệu | Nội dung |
-> |---|---|
-> | [CHECKPOINTS.md](CHECKPOINTS.md) | **Hướng dẫn làm bài từng bước**: cần làm gì, sản phẩm, cách tự kiểm tra |
-> | [RUBRIC.md](RUBRIC.md) | Tiêu chí chấm điểm, điểm thưởng (tối đa +10) |
-> | [SUBMISSION.md](SUBMISSION.md) | Tên repo, cấu trúc nộp bài, nơi nộp, deadline |
-> | [RULES.md](RULES.md) | Quy định sử dụng AI, sao chép, nộp muộn, bảo mật API key |
+# Day 22 — LangSmith + Prompt Versioning
 
-# Chào mừng các bạn đến với Day 22: LangSmith + Prompt Versioning
+**Học viên:** Nguyễn Tất Đạt · **MSSV:** 2A202602578
 
-## Tổng quan
+[GitHub repository](https://github.com/Gaohonggg/K4-L3-DAY22-NguyenTatDat-2A202602578-LLMOpsPromptVersioning)
 
-Trong lab này, bạn sẽ xây dựng một hệ thống hỏi đáp hoàn chỉnh tích hợp nhiều công nghệ AI hiện đại:
+Bài lab xây dựng hệ thống hỏi đáp RAG có tracing, quản lý prompt qua LangSmith Hub,
+routing A/B tất định, đánh giá RAGAS và hai custom Guardrails validators.
 
-- **RAG Pipeline**: Xây dựng pipeline Retrieval-Augmented Generation sử dụng FAISS làm vector store và LangChain để kết nối các thành phần.
-- **LangSmith Tracing**: Theo dõi và quan sát toàn bộ luồng xử lý của ứng dụng LLM thông qua LangSmith dashboard.
-- **Prompt Hub & A/B Testing**: Quản lý phiên bản prompt trên LangSmith Prompt Hub và thực hiện A/B routing để so sánh hiệu quả giữa các phiên bản.
-- **RAGAS Evaluation**: Đánh giá chất lượng hệ thống RAG theo 4 chỉ số định lượng: faithfulness, answer relevancy, context recall, context precision.
-- **Guardrails AI**: Triển khai các bộ kiểm duyệt tự động để phát hiện thông tin cá nhân (PII) và sửa lỗi định dạng JSON trong đầu ra của LLM.
+## Kết quả đã thực hiện
 
----
+| Thành phần | Kết quả |
+|---|---|
+| RAG + tracing | FAISS 107 chunks; 50/50 câu chạy thành công |
+| Prompt Hub + A/B | Push/pull hai prompt; 50/50 truy vấn, V1=19 và V2=31 |
+| RAGAS | 50 QA mỗi phiên bản; đủ bốn metrics; cùng contexts cho mỗi cặp |
+| Guardrails | PII demo 6/6; JSON demo 7/7 |
+| Bằng chứng | Đủ bảy tệp bắt buộc trong [evidence/](evidence/) |
 
-## Mục tiêu học tập
+| Metric | V1 | V2 |
+|---|---:|---:|
+| Faithfulness | 0.9803 | 0.9378 |
+| Answer relevancy | 0.9156 | 0.8525 |
+| Context recall | 1.0000 | 1.0000 |
+| Context precision | 0.9450 | 0.9417 |
 
-Sau khi hoàn thành lab này, bạn sẽ có thể:
+Cả hai phiên bản đạt faithfulness ≥0.9. Báo cáo chi tiết, cấu hình và điểm từng mẫu:
+[evidence/03_ragas_report.json](evidence/03_ragas_report.json).
+Phân tích kết quả: [evidence/README.md](evidence/README.md).
 
-- Xây dựng và triển khai RAG pipeline hoàn chỉnh với LangChain LCEL và FAISS vector store.
-- Tích hợp LangSmith để theo dõi, gỡ lỗi và phân tích hiệu suất của ứng dụng LLM trong thực tế.
-- Quản lý vòng đời prompt bằng LangSmith Prompt Hub và thực hiện A/B testing có kiểm soát.
-- Đánh giá hệ thống RAG một cách định lượng bằng framework RAGAS với các chỉ số chuẩn công nghiệp.
-- Áp dụng Guardrails AI để xây dựng validator tùy chỉnh nhằm bảo vệ đầu ra của LLM khỏi dữ liệu nhạy cảm và lỗi định dạng.
+LangSmith project: `day22-nguyentatdat-2a202602578`. 
 
----
+## Thiết kế
 
-## Yêu cầu trước
+- `config.py` tải `.env` và thiết lập tracing trước khi import LangChain.
+- Bước 1 dùng LCEL: retriever → context/prompt → LLM → string parser.
+  Các run con cho thấy documents và context thực tế đưa vào prompt.
+- Bước 2 push/pull prompt bằng LangSmith Client, kiểm tra nội dung và commit hash.
+  Routing dùng MD5 của `request_id`; prompt lỗi không được thay âm thầm bằng local.
+- Bước 3 pull đúng commit Hub ghi ở bước 2. Reference chỉ dùng để đánh giá,
+  không đưa vào prompt sinh câu trả lời. Retrieval dùng chung cho V1/V2.
+- RAGAS đánh giá theo lô năm mẫu, lưu checkpoint sau mỗi lô thành công, từ chối
+  điểm thiếu/NaN và tính trung bình trên đủ 50 mẫu mỗi phiên bản.
+- Custom PII validator dùng regex; JSON validator sửa fences, nháy đơn và
+  trailing comma bên ngoài chuỗi. Cả hai trả `FailResult(fix_value=...)`
+  và nhận `OnFailAction.FIX` ở constructor.
+- `run_all.py` dừng ở bước thất bại đầu tiên, trả exit code khác 0 khi có lỗi.
 
-Trước khi bắt đầu, hãy đảm bảo bạn đã có:
+## Cấu trúc repo
 
-- **Python 3.10 trở lên** — kiểm tra bằng lệnh `python --version`
-- **API key** của ít nhất một trong các nhà cung cấp LLM sau:
-  - OpenAI (`OPENAI_API_KEY`)
-  - Google Gemini (`GOOGLE_API_KEY`)
-  - Anthropic Claude (`ANTHROPIC_API_KEY`)
-  - OpenRouter (`OPENROUTER_API_KEY`)
-  - Ollama (chạy local, không cần API key)
-- **Tài khoản LangSmith** — đăng ký miễn phí tại [smith.langchain.com](https://smith.langchain.com) và lấy API key
+`src/` giữ bốn entry point theo yêu cầu bài nộp, kèm `00_check_setup.py`,
+`config.py`, `qa_pairs.py`, `run_all.py`.
 
----
+Các module dùng chung trong `src/utils/`:
+`llm_factory.py`, `data_loader.py`, `prompt_registry.py`,
+`ragas_support.py`, `guardrails_validators.py`.
 
-## Cài đặt nhanh
+`tests/` kiểm tra routing, Hub loading, dataset/score integrity, validators và
+trạng thái thoát của runner. `data/knowledge_base.txt` là nguồn tri thức của bài.
+`evidence/` chứa bằng chứng nộp; `logs/` lưu output và checkpoint tại máy.
 
-```bash
-pip install -r requirements.txt
-pip install "langchain-community<0.4"   # bắt buộc: bản 0.4 làm import ragas lỗi
-cp .env.example .env             # điền LANGCHAIN_API_KEY, PROVIDER và key của provider
-cd src && python config.py       # phải in: ✅ Config OK
-```
+## Môi trường và cấu hình
 
-Hướng dẫn chi tiết (tạo venv, lấy API key LangSmith, chọn provider, lưu ý cho Windows) ở **Checkpoint 0** trong [CHECKPOINTS.md](CHECKPOINTS.md).
+Cấu hình đã chạy: Python 3.11.16, OpenAI `gpt-4o-mini`,
+embeddings `text-embedding-3-small`, temperature 0,
+chunk size 500 ký tự, overlap 50, top-k 3.
 
----
+Phiên bản trong báo cáo: RAGAS 0.4.3, LangChain Core 1.6.7,
+LangChain OpenAI 1.6.7, LangChain Community 0.3.31, FAISS CPU 1.15.1.
+Guardrails AI 0.11.0 đã được kiểm tra ở bước chuẩn bị.
+`requirements.lock` lưu bộ dependencies được resolve cho môi trường này.
 
-## Cấu trúc dự án
+Factory có hỗ trợ thêm providers khác, nhưng bài nộp và bước 3 được cấu hình,
+kiểm tra với OpenAI. Chạy từng lệnh từ thư mục gốc repository; cần cài `uv` trước.
 
-```
-Lab/
-├── src/
-│   ├── config.py                      # Tải .env, cấu hình providers
-│   ├── utils/
-│   │   ├── llm_factory.py             # Factory tạo LLM và Embeddings (5 providers)
-│   │   └── data_loader.py             # Load knowledge base, chunk, build FAISS
-│   ├── qa_pairs.py                    # 50 cặp câu hỏi + đáp án chuẩn
-│   ├── 01_langsmith_rag_pipeline.py   # Bước 1: RAG + LangSmith tracing
-│   ├── 02_prompt_hub_ab_routing.py    # Bước 2: Prompt Hub + A/B routing
-│   ├── 03_ragas_evaluation.py         # Bước 3: RAGAS evaluation (~15-30 phút)
-│   ├── 04_guardrails_validator.py     # Bước 4: Guardrails AI validators
-│   └── run_all.py                     # Chạy tất cả các bước
-├── data/
-│   ├── knowledge_base.txt             # Tài liệu nguồn cho RAG
-│   └── ragas_report.json              # Được tạo ra ở Bước 3
-├── evidence/                          # Nộp thư mục này lên GitHub
-│   ├── 01_langsmith_traces.png
-│   ├── 02_prompt_hub.png
-│   ├── 02_ab_routing_log.txt
-│   ├── 03_ragas_scores.png
-│   ├── 03_ragas_report.json
-│   ├── 04_pii_demo_log.txt
-│   └── 04_json_demo_log.txt
-├── .env.example                        # Template biến môi trường
-├── requirements.txt
-├── README.md                       # Tổng quan (file này)
-├── CHECKPOINTS.md                  # Hướng dẫn làm bài từng bước
-├── RUBRIC.md                       # Tiêu chí chấm điểm
-├── SUBMISSION.md                   # Cách nộp bài
-└── RULES.md                        # Quy định làm bài
-```
+~~~bash
+set -o pipefail
+mkdir -p logs
+uv venv --python 3.11 .venv
+uv pip sync --python .venv/bin/python requirements.lock 2>&1 | tee logs/00_install_dependencies.log
+uv pip check --python .venv/bin/python 2>&1 | tee logs/00_dependency_check.log
+cp -n .env.example .env
+~~~
 
----
+Điền `LANGCHAIN_API_KEY` và `OPENAI_API_KEY` trong `.env`, giữ `PROVIDER=openai`
+và `LANGCHAIN_TRACING_V2=true`. Không đưa key vào terminal output hoặc Git.
 
-## Các nhiệm vụ
+~~~bash
+.venv/bin/python src/config.py 2>&1 | tee logs/00_config_check.log
+.venv/bin/python src/00_check_setup.py 2>&1 | tee logs/00_local_setup_check.log
+.venv/bin/python src/00_check_setup.py --online 2>&1 | tee logs/00_online_setup_check.log
+~~~
 
-Lab được chia thành 4 nhiệm vụ, mỗi nhiệm vụ 25 điểm (tổng 100 điểm):
+Chế độ `--online` gọi embeddings và LLM một lần mỗi loại, rồi gửi trace
+`setup-check`; trace này không thay cho traces bắt buộc của bước 1/2.
 
-| Nhiệm vụ | Tên                              | Điểm | Thời gian ước tính   |
-|----------|----------------------------------|------|----------------------|
-| 1        | RAG Pipeline với LangSmith       | 25đ  | 25–45 phút           |
-| 2        | Prompt Hub & A/B Routing         | 25đ  | 20–30 phút           |
-| 3        | RAGAS Evaluation                 | 25đ  | 45–75 phút           |
-| 4        | Guardrails AI Validators         | 25đ  | 20–30 phút           |
+## Kiểm tra và chạy bài lab
 
-**Nhiệm vụ 1 — RAG Pipeline với LangSmith (25đ):** Xây dựng vector store từ knowledge base, tạo RAG chain, và tích hợp `@traceable` để ghi lại ít nhất 50 traces trên LangSmith dashboard.
+Tests dùng dữ liệu giả và mocks, không gọi LLM/API:
 
-**Nhiệm vụ 2 — Prompt Hub & A/B Routing (25đ):** Soạn 2 system prompt có ngữ nghĩa khác biệt, đẩy lên LangSmith Prompt Hub, pull về khi chạy, và định tuyến câu hỏi theo hash của `request_id`.
+~~~bash
+.venv/bin/python -m unittest discover -s tests -v 2>&1 | tee logs/final_tests.log
+~~~
 
-**Nhiệm vụ 3 — RAGAS Evaluation (25đ):** Chạy 50 cặp QA qua cả 2 phiên bản prompt, xây dựng `EvaluationDataset`, tính 4 chỉ số RAGAS, và đạt faithfulness ≥ 0.8 với ít nhất 1 phiên bản.
+Chạy toàn bộ bốn bước:
 
-**Nhiệm vụ 4 — Guardrails AI Validators (25đ):** Triển khai `PIIDetector` tự động che thông tin cá nhân và `JSONFormatter` tự động sửa JSON lỗi từ đầu ra của LLM.
+~~~bash
+.venv/bin/python -u src/run_all.py 2>&1 | tee logs/final_run_all.log
+~~~
 
----
+Chạy riêng từng bước khi cần:
 
-Cách làm từng nhiệm vụ: xem [CHECKPOINTS.md](CHECKPOINTS.md). Cách nộp bài: xem [SUBMISSION.md](SUBMISSION.md).
+~~~bash
+.venv/bin/python -u src/run_all.py --step 1 2>&1 | tee logs/01_rag_full.log
+.venv/bin/python -u src/run_all.py --step 2 2>&1 | tee logs/02_ab_routing_full.log evidence/02_ab_routing_log.txt
+.venv/bin/python -u src/run_all.py --step 3 2>&1 | tee logs/03_ragas_full.log
+.venv/bin/python -u src/04_guardrails_validator.py --demo pii 2>&1 | tee logs/04_pii_demo.log evidence/04_pii_demo_log.txt
+.venv/bin/python -u src/04_guardrails_validator.py --demo json 2>&1 | tee logs/04_json_demo.log evidence/04_json_demo_log.txt
+~~~
 
----
+Bước 1/2 và RAGAS có phát sinh chi phí API. Chạy lại bước 1/2 tạo thêm traces và
+tạo lại FAISS. Bước 3 cần `logs/02_prompt_manifest.json` từ bước 2;
+khi clone repo mới, chạy bước 2 trước.
 
-## Tips và lưu ý
+Chạy thử bằng `--limit 1` ở bước 1, `--limit 5` ở bước 2 và `--limit 2` ở bước 3.
+Báo cáo smoke lưu riêng, không dùng để nộp.
 
-**LangSmith tracing — đặt biến môi trường đúng thứ tự:**
-Các biến `LANGCHAIN_TRACING_V2`, `LANGCHAIN_API_KEY`, và `LANGCHAIN_PROJECT` phải được đặt **trước khi import bất kỳ thứ gì từ LangChain**. Nếu import trước khi đặt biến, tracing sẽ không hoạt động.
+## Checkpoint và evidence
 
-```python
-import os
-os.environ["LANGCHAIN_TRACING_V2"] = "true"   # Phải đặt trước
-os.environ["LANGCHAIN_API_KEY"]    = "..."     # Phải đặt trước
-from langchain_core.prompts import ChatPromptTemplate  # Sau đó mới import
-```
+`logs/03_ragas/` phân biệt cấu hình bằng fingerprint của dữ liệu, prompt commits,
+model, retrieval và phiên bản thư viện. Chạy lại bước 3 cùng cấu hình sẽ tiếp tục
+generations và lô đánh giá đã hoàn thành. Không chạy đồng thời hai tiến trình bước 3
+cùng cấu hình vì chúng ghi cùng checkpoint.
 
-**RAGAS chậm — bắt đầu sớm:**
-Bước 3 sẽ mất từ 15 đến 30 phút để hoàn thành do phải gọi LLM cho mỗi sample trong bộ đánh giá. Hãy bắt đầu bước này ngay khi bước 2 xong, đặc biệt nếu bạn đang dùng model có rate limit thấp.
+Bước 3 xuất `data/ragas_report.json` và `evidence/03_ragas_report.json` khi hoàn
+thành đủ mẫu. Không có checkpoint trên máy mới thì phải đánh giá lại. Output tại
+máy được gitignore; bản report trong evidence được giữ để nộp.
 
-**Guardrails AI — `on_fail` phải truyền đúng chỗ:**
-Tham số `on_fail` phải được truyền vào **constructor của validator**, không phải vào `Guard.use()`:
+Bằng chứng trace phải kiểm tra trên dashboard; thông báo flush queue trong
+terminal không tự chứng minh đã có đủ traces hiển thị.
 
-```python
-# ĐÚNG
-Guard().use(PIIDetector(on_fail=OnFailAction.FIX))
+## Phạm vi và giới hạn
 
-# SAI — sẽ không hoạt động đúng
-Guard().use(PIIDetector(), on_fail=OnFailAction.FIX)
-```
+Điểm RAGAS là kết quả một lần đánh giá bằng LLM trên knowledge base của lab,
+không phải cam kết chất lượng cho mọi dữ liệu. Context recall bằng 1 chỉ áp dụng
+cho 50 reference của bộ QA này. Fact về model trong QA/knowledge base giữ theo
+dữ liệu của bài, không phải tài liệu cập nhật thông số sản phẩm.
 
-**Lưu ý phiên bản thư viện:**
-- `langchain-community` phải `< 0.4` (chạy `pip install "langchain-community<0.4"` sau khi cài `requirements.txt`): bản 0.4 làm `import ragas` lỗi `No module named 'langchain_community.chat_models.vertexai'`.
-- RAGAS 0.4: `result[metric_name]` trả về **list** điểm theo từng sample → dùng `numpy.mean()`; truyền `llm=` và `embeddings=` vào `evaluate()`. Cảnh báo deprecated khi import `ragas.metrics` có thể bỏ qua.
-- Guardrails 0.11: với `OnFailAction.FIX`, chỉ `FailResult(fix_value=...)` mới thay được output; `PassResult(value_override=...)` **không** có tác dụng.
+PII detector hỗ trợ các định dạng regex trong docstring, không bao phủ mọi loại
+PII hoặc mọi định dạng điện thoại quốc tế. JSON fallback báo lỗi parse,
+không tái tạo nội dung nghiệp vụ khi input không thể sửa.
 
-**Bảo mật — không bao giờ commit `.env`:**
-Tệp `.env` chứa API key nhạy cảm. Đảm bảo `.gitignore` đã có dòng `.env` trước khi push lên GitHub. Chỉ commit tệp `.env.example` (không chứa giá trị thật). Vi phạm quy tắc này sẽ bị trừ 10 điểm tự động.
+## Tài liệu yêu cầu
 
----
+- [CHECKPOINTS.md](CHECKPOINTS.md): hướng dẫn gốc của lab.
+- [RUBRIC.md](RUBRIC.md): tiêu chí điểm bắt buộc và bonus.
+- [SUBMISSION.md](SUBMISSION.md): cấu trúc bài nộp và deadline.
+- [RULES.md](RULES.md): quy định làm bài và bảo mật.
 
-## Tài liệu tham khảo
-
-| Tài liệu                    | Đường dẫn                                                          |
-|-----------------------------|--------------------------------------------------------------------|
-| LangSmith Docs              | https://docs.smith.langchain.com                                   |
-| LangChain LCEL              | https://python.langchain.com/docs/concepts/lcel                    |
-| LangSmith Prompt Hub        | https://docs.smith.langchain.com/prompt-hub                        |
-| RAGAS Documentation         | https://docs.ragas.io                                              |
-| Guardrails AI               | https://www.guardrailsai.com/docs                                  |
-| FAISS (Facebook AI)         | https://faiss.ai                                                   |
-| LangChain FAISS Integration | https://python.langchain.com/docs/integrations/vectorstores/faiss  |
+Deadline trong tài liệu gốc: **23:59 ngày 08/10/2026, GMT+7**,
+trừ khi giảng viên thông báo khác. Trước khi nộp, kiểm tra repo public,
+đủ evidence, `.env` không bị track và không có API key trong file đã commit.

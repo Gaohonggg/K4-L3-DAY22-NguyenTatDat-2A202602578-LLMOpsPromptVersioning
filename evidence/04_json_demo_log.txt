@@ -1,0 +1,57 @@
+JSON REPAIR DEMO | on_fail=FIX | no raw input in fallback
+
+[Valid JSON]
+Input: {"name": "Alice", "age": 30}
+Output: {"name": "Alice", "age": 30}
+CHECK PASS | Guardrails validation_passed=True
+
+[Markdown fences]
+Input: ```json
+{"name": "Bob"}
+```
+Output: {
+  "name": "Bob"
+}
+CHECK PASS | Guardrails validation_passed=True
+
+[Single quotes]
+Input: {'name': 'Charlie', 'score': 95}
+Output: {
+  "name": "Charlie",
+  "score": 95
+}
+CHECK PASS | Guardrails validation_passed=True
+
+[Trailing comma]
+Input: {"key": "value",}
+Output: {
+  "key": "value"
+}
+CHECK PASS | Guardrails validation_passed=True
+
+[Truly invalid]
+Input: This is not JSON at all: ??? {]
+Output: {"error": "Unable to parse JSON"}
+CHECK PASS | Guardrails validation_passed=True
+
+[Apostrophe preserved]
+Input: {"note": "don't change this",}
+Output: {
+  "note": "don't change this"
+}
+CHECK PASS | Guardrails validation_passed=True
+
+[Comma inside string]
+Input: {"note": "keep ,} and ,]", "items": [1, 2,],}
+Output: {
+  "note": "keep ,} and ,]",
+  "items": [
+    1,
+    2
+  ]
+}
+CHECK PASS | Guardrails validation_passed=True
+
+JSON SUMMARY: passed=7 | failed=0
+
+STEP 4 PASSED

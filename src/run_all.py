@@ -10,6 +10,7 @@ import sys
 import argparse
 import importlib
 from pathlib import Path
+from collections.abc import Sequence
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -22,7 +23,8 @@ STEPS = {
 }
 
 
-def run_step(step_num: int):
+def run_step(step_num: int) -> bool:
+    """Import and run a lab step, converting exceptions into an explicit result."""
     title, module_name = STEPS[step_num]
     print(f"\n{'=' * 60}")
     print(f"  {title}")
@@ -33,15 +35,16 @@ def run_step(step_num: int):
         print(f"\n✅ {title} — HOÀN THÀNH")
         return True
     except SystemExit as e:
-        if e.code != 0:
+        if e.code not in (None, 0):
             print(f"\n❌ {title} — DỪNG (config thiếu hoặc lỗi)")
-        return e.code == 0
+        return e.code in (None, 0)
     except Exception as e:
-        print(f"\n❌ {title} — LỖI: {e}")
+        print(f"\n❌ {title} — LỖI: {type(e).__name__}")
         return False
 
 
-def main():
+def main(argv: Sequence[str] | None = None) -> int:
+    """Return 0 only when every requested step succeeds; stop at the first failure."""
     parser = argparse.ArgumentParser(
         description="Chạy Day22 Lab: LangSmith + Prompt Versioning + RAGAS + Guardrails"
     )
@@ -49,7 +52,7 @@ def main():
         "--step", type=int, choices=[1, 2, 3, 4],
         help="Chỉ chạy bước được chỉ định (1-4)"
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     steps_to_run = [args.step] if args.step else list(STEPS.keys())
 
@@ -70,6 +73,8 @@ def main():
         status = "✅ PASS" if success else "❌ FAIL"
         print(f"  {status}  {title}")
 
+    return 0 if len(results) == len(steps_to_run) and all(results.values()) else 1
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

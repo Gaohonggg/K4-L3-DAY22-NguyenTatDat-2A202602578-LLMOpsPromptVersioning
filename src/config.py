@@ -20,7 +20,7 @@ os.environ["LANGCHAIN_ENDPOINT"]   = os.getenv("LANGCHAIN_ENDPOINT", "https://ap
 
 # ── Provider mặc định ─────────────────────────────────────────────────────
 # Đổi giá trị PROVIDER trong .env: openai | gemini | anthropic | ollama | openrouter
-PROVIDER = os.getenv("PROVIDER", "openai").lower()
+PROVIDER = os.getenv("PROVIDER", "openai").strip().lower()
 
 # ── OpenAI ────────────────────────────────────────────────────────────────
 OPENAI_API_KEY         = os.getenv("OPENAI_API_KEY", "")
@@ -57,25 +57,32 @@ def validate() -> bool:
     Kiểm tra các biến môi trường bắt buộc đã được cấu hình.
     Trả về True nếu hợp lệ, False nếu thiếu.
     """
-    missing = []
+    errors = []
+    provider_keys = {
+        "openai": ("OPENAI_API_KEY",),
+        "gemini": ("GOOGLE_API_KEY",),
+        "anthropic": ("ANTHROPIC_API_KEY", "OPENAI_API_KEY"),
+        "openrouter": ("OPENROUTER_API_KEY", "OPENAI_API_KEY"),
+        "ollama": (),
+    }
+    if PROVIDER not in provider_keys:
+        errors.append("PROVIDER phải là openai, gemini, anthropic, ollama hoặc openrouter")
 
-    if not LANGSMITH_API_KEY:
-        missing.append("LANGCHAIN_API_KEY (LangSmith)")
+    required_keys = ("LANGCHAIN_API_KEY",) + provider_keys.get(PROVIDER, ())
+    for name in required_keys:
+        value = os.getenv(name, "").strip()
+        if not value or value.lower().startswith("your_"):
+            errors.append(f"{name}: chưa điền API key")
 
-    if PROVIDER == "openai" and not OPENAI_API_KEY:
-        missing.append("OPENAI_API_KEY")
-    elif PROVIDER == "gemini" and not GOOGLE_API_KEY:
-        missing.append("GOOGLE_API_KEY")
-    elif PROVIDER == "anthropic" and not ANTHROPIC_API_KEY:
-        missing.append("ANTHROPIC_API_KEY")
-    elif PROVIDER == "openrouter" and not OPENROUTER_API_KEY:
-        missing.append("OPENROUTER_API_KEY")
-    # Ollama: không cần API key
+    if os.environ["LANGCHAIN_TRACING_V2"].strip().lower() != "true":
+        errors.append("LANGCHAIN_TRACING_V2 phải là true để ghi traces")
+    if not LANGSMITH_PROJECT.strip():
+        errors.append("LANGCHAIN_PROJECT không được để trống")
 
-    if missing:
-        print("⚠️  Thiếu biến môi trường:")
-        for m in missing:
-            print(f"   - {m}")
+    if errors:
+        print("⚠️  Cấu hình chưa hợp lệ:")
+        for error in errors:
+            print(f"   - {error}")
         print("   Hãy kiểm tra file .env của bạn (xem .env.example để biết thêm).")
         return False
 
@@ -84,4 +91,4 @@ def validate() -> bool:
 
 
 if __name__ == "__main__":
-    validate()
+    raise SystemExit(0 if validate() else 1)

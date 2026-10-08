@@ -1,5 +1,7 @@
 # API keys — KHÔNG BAO GIỜ commit file này
 .env
+.env.*
+!.env.example
 
 # Python
 __pycache__/
@@ -28,3 +30,4 @@ env/
 
 # Lab outputs (không commit, chỉ nộp evidence/)
 data/ragas_report.json
+logs/
